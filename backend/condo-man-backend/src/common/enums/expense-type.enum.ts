@@ -1,0 +1,5 @@
+export enum ExpenseType {
+  MAINTENANCE = 'MAINTENANCE',
+  UTILITIES = 'UTILITIES',
+  INSURANCE = 'INSURANCE',
+}

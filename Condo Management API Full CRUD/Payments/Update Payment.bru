@@ -1,0 +1,25 @@
+meta {
+  name: Update Payment
+  type: http
+  seq: 4
+}
+
+patch {
+  url: http://localhost:3000/payments/{{paymentId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "amount": 1600.0
+  }
+}
+
+settings {
+  encodeUrl: true
+}

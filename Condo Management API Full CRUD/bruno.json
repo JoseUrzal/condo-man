@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Condo Management API Full CRUD",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

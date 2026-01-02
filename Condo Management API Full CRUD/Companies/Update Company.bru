@@ -1,0 +1,26 @@
+meta {
+  name: Update Company
+  type: http
+  seq: 4
+}
+
+patch {
+  url: http://localhost:3000/companies/{{companyId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Sunset Condos Updated",
+    "isActive": false
+  }
+}
+
+settings {
+  encodeUrl: true
+}

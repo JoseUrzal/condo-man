@@ -1,0 +1,15 @@
+meta {
+  name: Delete Expense
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:3000/expenses/{{expenseId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

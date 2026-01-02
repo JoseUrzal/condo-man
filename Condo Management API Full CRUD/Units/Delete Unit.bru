@@ -1,0 +1,15 @@
+meta {
+  name: Delete Unit
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:3000/units/{{unitId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

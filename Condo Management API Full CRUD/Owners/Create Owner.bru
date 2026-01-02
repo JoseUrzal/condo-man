@@ -1,0 +1,28 @@
+meta {
+  name: Create Owner
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/owners
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "firstName": "Alice",
+    "lastName": "Smith",
+    "email": "alice.smith@example.com",
+    "phone": "+351987654321"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

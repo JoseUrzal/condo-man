@@ -1,0 +1,25 @@
+meta {
+  name: Update Owner
+  type: http
+  seq: 4
+}
+
+patch {
+  url: http://localhost:3000/owners/{{ownerId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "phone": "+351999888777"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

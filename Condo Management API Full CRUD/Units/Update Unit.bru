@@ -1,0 +1,25 @@
+meta {
+  name: Update Unit
+  type: http
+  seq: 4
+}
+
+patch {
+  url: http://localhost:3000/units/{{unitId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "floor": 2
+  }
+}
+
+settings {
+  encodeUrl: true
+}

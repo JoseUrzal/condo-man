@@ -1,0 +1,25 @@
+meta {
+  name: Update Condominium
+  type: http
+  seq: 4
+}
+
+patch {
+  url: http://localhost:3000/condominiums/{{condominiumId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Sunset Condos Central Updated"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

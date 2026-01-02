@@ -1,0 +1,15 @@
+meta {
+  name: Delete Payment
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:3000/payments/{{paymentId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

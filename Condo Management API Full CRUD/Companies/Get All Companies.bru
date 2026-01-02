@@ -1,0 +1,15 @@
+meta {
+  name: Get All Companies
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:3000/companies
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

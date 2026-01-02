@@ -1,0 +1,27 @@
+meta {
+  name: Create Condominium
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/condominiums
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Sunset Condos Central",
+    "address": "Rua Central, 123, Porto",
+    "companyId": "{{companyId}}"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

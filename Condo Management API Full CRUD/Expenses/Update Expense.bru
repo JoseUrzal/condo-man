@@ -1,0 +1,25 @@
+meta {
+  name: Update Expense
+  type: http
+  seq: 4
+}
+
+patch {
+  url: http://localhost:3000/expenses/{{expenseId}}
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "amount": 350.0
+  }
+}
+
+settings {
+  encodeUrl: true
+}

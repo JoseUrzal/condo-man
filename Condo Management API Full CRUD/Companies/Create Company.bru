@@ -1,0 +1,30 @@
+meta {
+  name: Create Company
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/companies
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "name": "Sunset Condos",
+    "email": "contact@sunsetcondos.com",
+    "vat_number": "PT123456789",
+    "phone": "+351123456789",
+    "address": "Rua Central, 123, Porto",
+    "isActive": true
+  }
+}
+
+settings {
+  encodeUrl: true
+}

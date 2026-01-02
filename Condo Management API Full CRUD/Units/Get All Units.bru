@@ -1,0 +1,15 @@
+meta {
+  name: Get All Units
+  type: http
+  seq: 2
+}
+
+get {
+  url: http://localhost:3000/units
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

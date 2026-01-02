@@ -1,0 +1,28 @@
+meta {
+  name: Create Unit
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/units
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "number": "101",
+    "floor": 1,
+    "condominiumId": "{{condominiumId}}",
+    "ownerIds": ["{{ownerId}}"]
+  }
+}
+
+settings {
+  encodeUrl: true
+}

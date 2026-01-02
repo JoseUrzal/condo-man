@@ -1,0 +1,15 @@
+meta {
+  name: Delete Condominium
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:3000/condominiums/{{condominiumId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

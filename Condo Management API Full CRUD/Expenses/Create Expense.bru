@@ -1,0 +1,28 @@
+meta {
+  name: Create Expense
+  type: http
+  seq: 1
+}
+
+post {
+  url: http://localhost:3000/expenses
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+}
+
+body:json {
+  {
+    "description": "Elevator Maintenance",
+    "amount": 300.0,
+    "date": "2026-01-02",
+    "condominiumId": "{{condominiumId}}"
+  }
+}
+
+settings {
+  encodeUrl: true
+}

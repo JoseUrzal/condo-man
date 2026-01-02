@@ -1,0 +1,15 @@
+meta {
+  name: Delete Company
+  type: http
+  seq: 5
+}
+
+delete {
+  url: http://localhost:3000/companies/{{companyId}}
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}
