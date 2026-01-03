@@ -11,7 +11,7 @@ import {
 import { Condominium } from '../condominiums/condominium.entity';
 import { Payment } from '../payments/payment.entity';
 import { Document } from '../documents/document.entity';
-import { ExpenseType } from '../common/enums';
+import { ExpenseType } from '../enums';
 
 @Entity('expenses')
 export class Expense {

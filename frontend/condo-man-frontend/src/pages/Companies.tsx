@@ -1,18 +1,18 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { DashboardLayout } from '@/layouts/DashboardLayout';
-import { PageHeader } from '@/components/PageHeader';
-import { DataTable, Column } from '@/components/DataTable';
-import { StatusBadge } from '@/components/StatusBadge';
-import { FormModal } from '@/components/FormModal';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
-import { useToast } from '@/hooks/use-toast';
-import { companiesService } from '@/services';
-import { Company, CreateCompanyDto } from '@/types';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { DashboardLayout } from "@/layouts/DashboardLayout";
+import { PageHeader } from "@/components/PageHeader";
+import { DataTable, Column } from "@/components/DataTable";
+import { StatusBadge } from "@/components/StatusBadge";
+import { FormModal } from "@/components/FormModal";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/hooks/use-toast";
+import { companiesService } from "@/services";
+import { Company, CreateCompanyDto } from "@/types";
 
 export default function Companies() {
   const navigate = useNavigate();
@@ -23,11 +23,11 @@ export default function Companies() {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedCompany, setSelectedCompany] = useState<Company | null>(null);
   const [formData, setFormData] = useState<CreateCompanyDto>({
-    name: '',
-    vatNumber: '',
-    email: '',
-    phone: '',
-    address: '',
+    name: "",
+    vatNumber: "",
+    email: "",
+    phone: "",
+    address: "",
     isActive: true,
   });
 
@@ -40,7 +40,7 @@ export default function Companies() {
       const data = await companiesService.getAll();
       setCompanies(data);
     } catch (error) {
-      toast({ title: 'Error loading companies', variant: 'destructive' });
+      toast({ title: "Error loading companies", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -51,16 +51,16 @@ export default function Companies() {
     try {
       if (selectedCompany) {
         await companiesService.update(selectedCompany.id, formData);
-        toast({ title: 'Company updated successfully' });
+        toast({ title: "Company updated successfully" });
       } else {
         await companiesService.create(formData);
-        toast({ title: 'Company created successfully' });
+        toast({ title: "Company created successfully" });
       }
       setIsModalOpen(false);
       resetForm();
       loadCompanies();
     } catch (error) {
-      toast({ title: 'Error saving company', variant: 'destructive' });
+      toast({ title: "Error saving company", variant: "destructive" });
     }
   };
 
@@ -68,12 +68,12 @@ export default function Companies() {
     if (!selectedCompany) return;
     try {
       await companiesService.delete(selectedCompany.id);
-      toast({ title: 'Company deleted successfully' });
+      toast({ title: "Company deleted successfully" });
       setIsDeleteOpen(false);
       setSelectedCompany(null);
       loadCompanies();
     } catch (error) {
-      toast({ title: 'Error deleting company', variant: 'destructive' });
+      toast({ title: "Error deleting company", variant: "destructive" });
     }
   };
 
@@ -98,23 +98,23 @@ export default function Companies() {
   const resetForm = () => {
     setSelectedCompany(null);
     setFormData({
-      name: '',
-      vatNumber: '',
-      email: '',
-      phone: '',
-      address: '',
+      name: "",
+      vatNumber: "",
+      email: "",
+      phone: "",
+      address: "",
       isActive: true,
     });
   };
 
   const columns: Column<Company>[] = [
-    { key: 'name', header: 'Name' },
-    { key: 'vatNumber', header: 'VAT Number' },
-    { key: 'email', header: 'Email' },
-    { key: 'phone', header: 'Phone' },
+    { key: "name", header: "Name" },
+    { key: "vatNumber", header: "VAT Number" },
+    { key: "email", header: "Email" },
+    { key: "phone", header: "Phone" },
     {
-      key: 'isActive',
-      header: 'Status',
+      key: "isActive",
+      header: "Status",
       render: (company) => <StatusBadge status={company.isActive} />,
     },
   ];
@@ -143,7 +143,7 @@ export default function Companies() {
       <FormModal
         open={isModalOpen}
         onOpenChange={setIsModalOpen}
-        title={selectedCompany ? 'Edit Company' : 'Add Company'}
+        title={selectedCompany ? "Edit Company" : "Add Company"}
         description="Fill in the company details below."
       >
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -152,7 +152,9 @@ export default function Companies() {
             <Input
               id="name"
               value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
               required
             />
           </div>
@@ -161,7 +163,9 @@ export default function Companies() {
             <Input
               id="vatNumber"
               value={formData.vatNumber}
-              onChange={(e) => setFormData({ ...formData, vatNumber: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, vatNumber: e.target.value })
+              }
               required
             />
           </div>
@@ -172,7 +176,9 @@ export default function Companies() {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
                 required
               />
             </div>
@@ -181,7 +187,9 @@ export default function Companies() {
               <Input
                 id="phone"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
                 required
               />
             </div>
@@ -191,7 +199,9 @@ export default function Companies() {
             <Input
               id="address"
               value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, address: e.target.value })
+              }
               required
             />
           </div>
@@ -199,16 +209,22 @@ export default function Companies() {
             <Switch
               id="isActive"
               checked={formData.isActive}
-              onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, isActive: checked })
+              }
             />
             <Label htmlFor="isActive">Active</Label>
           </div>
           <div className="flex justify-end gap-3 pt-4">
-            <Button type="button" variant="outline" onClick={() => setIsModalOpen(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsModalOpen(false)}
+            >
               Cancel
             </Button>
             <Button type="submit">
-              {selectedCompany ? 'Update' : 'Create'}
+              {selectedCompany ? "Update" : "Create"}
             </Button>
           </div>
         </form>

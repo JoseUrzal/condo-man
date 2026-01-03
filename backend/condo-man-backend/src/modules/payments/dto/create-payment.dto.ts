@@ -5,7 +5,7 @@ import {
   IsOptional,
   IsDateString,
 } from 'class-validator';
-import { PaymentMethod, PaymentStatus } from '../../common/enums';
+import { PaymentMethod, PaymentStatus } from '../../enums';
 
 export class CreatePaymentDto {
   @IsNumber()

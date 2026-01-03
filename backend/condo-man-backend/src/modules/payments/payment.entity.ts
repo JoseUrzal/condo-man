@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Unit } from '../units/unit.entity';
 import { Expense } from '../expenses/expense.entity';
-import { PaymentMethod, PaymentStatus } from '../common/enums';
+import { PaymentMethod, PaymentStatus } from '../enums';
 
 @Entity('payments')
 export class Payment {

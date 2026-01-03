@@ -7,7 +7,7 @@ import {
   IsDateString,
   MaxLength,
 } from 'class-validator';
-import { ExpenseType } from '../../common/enums';
+import { ExpenseType } from '../../enums';
 
 export class CreateExpenseDto {
   @IsString()

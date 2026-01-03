@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
-import { CompaniesModule } from './companies/companies.module';
-import { CondominiumsModule } from './condominiums/condominiums.module';
-import { UnitsModule } from './units/units.module';
-import { OwnersModule } from './owners/owners.module';
-import { ExpensesModule } from './expenses/expenses.module';
-import { PaymentsModule } from './payments/payments.module';
-import { DocumentsModule } from './documents/documents.module';
+import { UsersModule } from './modules/users/users.module';
+import { CompaniesModule } from './modules/companies/companies.module';
+import { CondominiumsModule } from './modules/condominiums/condominiums.module';
+import { UnitsModule } from './modules/units/units.module';
+import { OwnersModule } from './modules/owners/owners.module';
+import { ExpensesModule } from './modules/expenses/expenses.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { DocumentsModule } from './modules/documents/documents.module';
 
 @Module({
   imports: [
