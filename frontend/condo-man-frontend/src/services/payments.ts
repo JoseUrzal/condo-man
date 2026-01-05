@@ -1,11 +1,11 @@
-import apiClient from './api';
-import { Payment, CreatePaymentDto, UpdatePaymentDto } from '@/types';
+import apiClient from "./api";
+import { Payment, CreatePaymentDto, UpdatePaymentDto } from "@/types";
 
-const ENDPOINT = '/payments';
+const ENDPOINT = "/payments";
 
 export const paymentsService = {
-  getAll: async (): Promise<Payment[]> => {
-    const { data } = await apiClient.get(ENDPOINT);
+  getAll: async (params?: { condominiumId?: string }): Promise<Payment[]> => {
+    const { data } = await apiClient.get(ENDPOINT, { params });
     return data;
   },
 

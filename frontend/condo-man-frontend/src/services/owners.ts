@@ -1,11 +1,11 @@
-import apiClient from './api';
-import { Owner, CreateOwnerDto, UpdateOwnerDto } from '@/types';
+import apiClient from "./api";
+import { Owner, CreateOwnerDto, UpdateOwnerDto } from "@/types";
 
-const ENDPOINT = '/owners';
+const ENDPOINT = "/owners";
 
 export const ownersService = {
-  getAll: async (): Promise<Owner[]> => {
-    const { data } = await apiClient.get(ENDPOINT);
+  getAll: async (params?: { condominiumId?: string }): Promise<Owner[]> => {
+    const { data } = await apiClient.get(ENDPOINT, { params });
     return data;
   },
 

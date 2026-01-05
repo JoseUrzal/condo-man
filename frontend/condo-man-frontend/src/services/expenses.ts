@@ -1,16 +1,18 @@
-import apiClient from './api';
-import { Expense, CreateExpenseDto, UpdateExpenseDto } from '@/types';
+import apiClient from "./api";
+import { Expense, CreateExpenseDto, UpdateExpenseDto } from "@/types";
 
-const ENDPOINT = '/expenses';
+const ENDPOINT = "/expenses";
 
 export const expensesService = {
-  getAll: async (): Promise<Expense[]> => {
-    const { data } = await apiClient.get(ENDPOINT);
+  getAll: async (params?: { condominiumId?: string }): Promise<Expense[]> => {
+    const { data } = await apiClient.get(ENDPOINT, { params });
     return data;
   },
 
   getByCondominium: async (condominiumId: string): Promise<Expense[]> => {
-    const { data } = await apiClient.get(`${ENDPOINT}?condominiumId=${condominiumId}`);
+    const { data } = await apiClient.get(
+      `${ENDPOINT}?condominiumId=${condominiumId}`
+    );
     return data;
   },
 

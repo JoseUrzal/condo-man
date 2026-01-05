@@ -1,16 +1,18 @@
-import apiClient from './api';
-import { Unit, CreateUnitDto, UpdateUnitDto } from '@/types';
+import apiClient from "./api";
+import { Unit, CreateUnitDto, UpdateUnitDto } from "@/types";
 
-const ENDPOINT = '/units';
+const ENDPOINT = "/units";
 
 export const unitsService = {
-  getAll: async (): Promise<Unit[]> => {
-    const { data } = await apiClient.get(ENDPOINT);
+  getAll: async (params?: { condominiumId?: string }): Promise<Unit[]> => {
+    const { data } = await apiClient.get(ENDPOINT, { params });
     return data;
   },
 
   getByCondominium: async (condominiumId: string): Promise<Unit[]> => {
-    const { data } = await apiClient.get(`${ENDPOINT}?condominiumId=${condominiumId}`);
+    const { data } = await apiClient.get(
+      `${ENDPOINT}?condominiumId=${condominiumId}`
+    );
     return data;
   },
 
