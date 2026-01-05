@@ -15,9 +15,8 @@ import Expenses from "./pages/Expenses";
 import Payments from "./pages/Payments";
 import NotFound from "./pages/NotFound";
 
-import { CondominiumLayout } from "@/layouts/CondominiumLayout";
-import { CondominiumProvider } from "@/context/CondominiumContext"; // ✅ import provider
-
+import CondominiumLayout from "@/layouts/CondominiumLayout";
+import { CondominiumProvider } from "@/context/CondominiumContext";
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -25,6 +24,8 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+
+
 
       {/* Wrap everything in CondominiumProvider */}
       <CondominiumProvider>

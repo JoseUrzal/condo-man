@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
-import { Button } from '@/components/ui/button';
-import { ArrowLeft, Plus } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft, Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface PageHeaderProps {
   title: string;
@@ -17,7 +17,7 @@ export function PageHeader({
   subtitle,
   showBack,
   onAdd,
-  addLabel = 'Add New',
+  addLabel = "Add New",
   children,
 }: PageHeaderProps) {
   const navigate = useNavigate();
@@ -37,9 +37,7 @@ export function PageHeader({
         )}
         <div>
           <h1 className="text-2xl font-bold text-foreground">{title}</h1>
-          {subtitle && (
-            <p className="text-muted-foreground mt-1">{subtitle}</p>
-          )}
+          {subtitle && <p className="text-muted-foreground mt-1">{subtitle}</p>}
         </div>
       </div>
       <div className="flex items-center gap-3">
