@@ -34,7 +34,7 @@ export class InboxItemService {
     companyId: string;
     emailMessageId: string;
     suggestedType?: string;
-    extractedData?: any;
+    extractedData?: Record<string, unknown>;
   }) {
     const item = this.repo.create({
       companyId: params.companyId,

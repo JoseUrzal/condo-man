@@ -1,34 +1,26 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { DashboardLayout } from "@/layouts/DashboardLayout";
-import { PageHeader } from "@/components/PageHeader";
+import { useEffect, useState, useCallback } from "react";
 import { DataTable, Column } from "@/components/DataTable";
 import { FormModal } from "@/components/FormModal";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { unitsService, condominiumsService } from "@/services";
-import { Unit, Condominium, CreateUnitDto } from "@/types";
+import { unitsService } from "@/services";
+import { Unit, CreateUnitDto } from "@/types";
 import { useCondominium } from "@/context/CondominiumContext";
+import { PageHeader } from "@/components/PageHeader";
 
 export default function Units() {
-  const navigate = useNavigate();
+  const { condominiumId } = useCondominium();
   const { toast } = useToast();
+
   const [units, setUnits] = useState<Unit[]>([]);
-  const [condominiums, setCondominiums] = useState<Condominium[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [selectedUnit, setSelectedUnit] = useState<Unit | null>(null);
+
   const [formData, setFormData] = useState<CreateUnitDto>({
     doorNumber: "",
     floor: "",
@@ -37,36 +29,41 @@ export default function Units() {
     condominiumId: "",
   });
 
-const { condominiumId } = useCondominium();
-
+  const loadUnits = useCallback(
+    async (activeCondominiumId: string) => {
+      try {
+        setIsLoading(true);
+        const data = await unitsService.getAll({ condominiumId: activeCondominiumId });
+        setUnits(data);
+      } catch {
+        toast({ title: "Error loading units", variant: "destructive" });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [toast],
+  );
 
   useEffect(() => {
     if (!condominiumId) return;
 
-    unitsService.getAll({ condominiumId }).then(setUnits);
-  }, [condominiumId]);
+    setFormData((prev) => ({
+      ...prev,
+      condominiumId,
+    }));
 
-  if (!condominiumId) {
-    return <div>No condominium selected</div>;
-  }
+    void loadUnits(condominiumId);
+  }, [condominiumId, loadUnits]);
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      const [unitsData, condosData] = await Promise.all([
-        unitsService.getAll({ condominiumId }),
-        condominiumsService.getAll(),
-      ]);
-      setUnits(unitsData);
-      setCondominiums(condosData);
-    } catch (error) {
-      toast({ title: "Error loading data", variant: "destructive" });
-    } finally {
-      setIsLoading(false);
-    }
+  const resetForm = () => {
+    setSelectedUnit(null);
+    setFormData({
+      doorNumber: "",
+      floor: "",
+      typology: "",
+      permillage: 0,
+      condominiumId: condominiumId!,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,8 +78,10 @@ const { condominiumId } = useCondominium();
       }
       setIsModalOpen(false);
       resetForm();
-      loadData();
-    } catch (error) {
+      if (condominiumId) {
+        await loadUnits(condominiumId);
+      }
+    } catch {
       toast({ title: "Error saving unit", variant: "destructive" });
     }
   };
@@ -94,33 +93,12 @@ const { condominiumId } = useCondominium();
       toast({ title: "Unit deleted successfully" });
       setIsDeleteOpen(false);
       setSelectedUnit(null);
-      loadData();
-    } catch (error) {
+      if (condominiumId) {
+        await loadUnits(condominiumId);
+      }
+    } catch {
       toast({ title: "Error deleting unit", variant: "destructive" });
     }
-  };
-
-  const openEditModal = (unit: Unit) => {
-    setSelectedUnit(unit);
-    setFormData({
-      doorNumber: unit.doorNumber,
-      floor: unit.floor,
-      typology: unit.typology,
-      permillage: unit.permillage,
-      condominiumId: unit.condominiumId,
-    });
-    setIsModalOpen(true);
-  };
-
-  const resetForm = () => {
-    setSelectedUnit(null);
-    setFormData({
-      doorNumber: "",
-      floor: "",
-      typology: "",
-      permillage: 0,
-      condominiumId: "",
-    });
   };
 
   const columns: Column<Unit>[] = [
@@ -130,11 +108,16 @@ const { condominiumId } = useCondominium();
     { key: "permillage", header: "Permillage (‰)" },
   ];
 
+  if (!condominiumId) {
+    return <div>No condominium selected</div>;
+  }
+
   return (
-    <DashboardLayout>
+    <>
+      <div className="flex justify-end"></div>
       <PageHeader
         title="Units"
-        subtitle="Manage all units"
+        subtitle="Manage condominium units"
         onAdd={() => {
           resetForm();
           setIsModalOpen(true);
@@ -146,8 +129,17 @@ const { condominiumId } = useCondominium();
         data={units}
         columns={columns}
         isLoading={isLoading}
-        onView={(unit) => navigate(`/units/${unit.id}`)}
-        onEdit={openEditModal}
+        onEdit={(unit) => {
+          setSelectedUnit(unit);
+          setFormData({
+            doorNumber: unit.doorNumber,
+            floor: unit.floor,
+            typology: unit.typology,
+            permillage: unit.permillage,
+            condominiumId: condominiumId!,
+          });
+          setIsModalOpen(true);
+        }}
         onDelete={(unit) => {
           setSelectedUnit(unit);
           setIsDeleteOpen(true);
@@ -160,26 +152,6 @@ const { condominiumId } = useCondominium();
         title={selectedUnit ? "Edit Unit" : "Add Unit"}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label>Condominium</Label>
-            <Select
-              value={formData.condominiumId}
-              onValueChange={(v) =>
-                setFormData({ ...formData, condominiumId: v })
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select condominium" />
-              </SelectTrigger>
-              <SelectContent>
-                {condominiums.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Door Number</Label>
@@ -202,6 +174,7 @@ const { condominiumId } = useCondominium();
               />
             </div>
           </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Typology</Label>
@@ -229,6 +202,7 @@ const { condominiumId } = useCondominium();
               />
             </div>
           </div>
+
           <div className="flex justify-end gap-3 pt-4">
             <Button
               type="button"
@@ -251,6 +225,6 @@ const { condominiumId } = useCondominium();
         confirmLabel="Delete"
         variant="destructive"
       />
-    </DashboardLayout>
+    </>
   );
 }

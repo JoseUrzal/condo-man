@@ -8,14 +8,14 @@ import Dashboard from "./pages/Dashboard";
 import Companies from "./pages/Companies";
 import CompanyDetail from "./pages/CompanyDetail";
 import Condominiums from "./pages/Condominiums";
-import CondominiumDetail from "./pages/CondominiumDetail";
+import { CondominiumDetail } from "./pages/CondominiumDetail";
 import Units from "./pages/Units";
 import Owners from "./pages/Owners";
 import Expenses from "./pages/Expenses";
 import Payments from "./pages/Payments";
 import NotFound from "./pages/NotFound";
 
-import CondominiumLayout from "@/layouts/CondominiumLayout";
+import { CondominiumLayout } from "@/layouts/CondominiumLayout";
 import { CondominiumProvider } from "@/context/CondominiumContext";
 const queryClient = new QueryClient();
 
@@ -24,8 +24,6 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-
-
 
       {/* Wrap everything in CondominiumProvider */}
       <CondominiumProvider>

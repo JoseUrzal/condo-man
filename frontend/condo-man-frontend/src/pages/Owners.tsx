@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { DashboardLayout } from "@/layouts/DashboardLayout";
+import { useState, useEffect, useCallback } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { DataTable, Column } from "@/components/DataTable";
 import { FormModal } from "@/components/FormModal";
@@ -28,30 +27,30 @@ export default function Owners() {
 
   const { condominiumId } = useCondominium();
 
+  const loadOwners = useCallback(
+    async (activeCondominiumId: string) => {
+      try {
+        setIsLoading(true);
+        const data = await ownersService.getAll({ condominiumId: activeCondominiumId });
+        setOwners(data);
+      } catch {
+        toast({ title: "Error loading owners", variant: "destructive" });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [toast],
+  );
+
   useEffect(() => {
     if (!condominiumId) return;
 
-    ownersService.getAll({ condominiumId }).then(setOwners);
-  }, [condominiumId]);
+    void loadOwners(condominiumId);
+  }, [condominiumId, loadOwners]);
 
   if (!condominiumId) {
     return <div>No condominium selected</div>;
   }
-
-  useEffect(() => {
-    loadOwners();
-  }, []);
-
-  const loadOwners = async () => {
-    try {
-      const data = await ownersService.getAll();
-      setOwners(data);
-    } catch (error) {
-      toast({ title: "Error loading owners", variant: "destructive" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,7 +64,9 @@ export default function Owners() {
       }
       setIsModalOpen(false);
       resetForm();
-      loadOwners();
+      if (condominiumId) {
+        await loadOwners(condominiumId);
+      }
     } catch (error) {
       toast({ title: "Error saving owner", variant: "destructive" });
     }
@@ -78,7 +79,9 @@ export default function Owners() {
       toast({ title: "Owner deleted successfully" });
       setIsDeleteOpen(false);
       setSelectedOwner(null);
-      loadOwners();
+      if (condominiumId) {
+        await loadOwners(condominiumId);
+      }
     } catch (error) {
       toast({ title: "Error deleting owner", variant: "destructive" });
     }
@@ -112,7 +115,8 @@ export default function Owners() {
   ];
 
   return (
-    <DashboardLayout>
+    <>
+      <div className="flex justify-end"></div>
       <PageHeader
         title="Owners"
         subtitle="Manage property owners"
@@ -202,6 +206,6 @@ export default function Owners() {
         confirmLabel="Delete"
         variant="destructive"
       />
-    </DashboardLayout>
+    </>
   );
 }

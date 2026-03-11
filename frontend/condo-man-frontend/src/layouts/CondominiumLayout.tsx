@@ -1,23 +1,21 @@
 import { Outlet, useParams } from "react-router-dom";
 import { useEffect } from "react";
 import { useCondominium } from "@/context/CondominiumContext";
+import { DashboardLayout } from "@/layouts/DashboardLayout";
 
-export default function CondominiumLayout() {
+export function CondominiumLayout() {
   const { id } = useParams<{ id: string }>();
-  const { condominium, setCondominium } = useCondominium();
+  const { setCondominiumId } = useCondominium();
 
   useEffect(() => {
-    if (!id) return;
+    if (id) {
+      setCondominiumId(id);
+    }
+  }, [id, setCondominiumId]);
 
-    // Avoid resetting if already selected
-    if (condominium?.id === id) return;
-
-    // ⚠️ TEMP — later replace with API fetch
-    setCondominium({
-      id,
-      name: `Condominium ${id}`,
-    });
-  }, [id]);
-
-  return <Outlet />;
+  return (
+    <DashboardLayout>
+      <Outlet />
+    </DashboardLayout>
+  );
 }

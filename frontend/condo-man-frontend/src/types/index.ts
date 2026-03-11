@@ -128,7 +128,7 @@ export interface CreateCompanyDto {
   isActive?: boolean;
 }
 
-export interface UpdateCompanyDto extends Partial<CreateCompanyDto> {}
+export type UpdateCompanyDto = Partial<CreateCompanyDto>;
 
 export interface CreateUserDto {
   firstName: string;
@@ -140,7 +140,7 @@ export interface CreateUserDto {
   companyId: string;
 }
 
-export interface UpdateUserDto extends Partial<Omit<CreateUserDto, 'password'>> {}
+export type UpdateUserDto = Partial<Omit<CreateUserDto, 'password'>>;
 
 export interface CreateCondominiumDto {
   name: string;
@@ -151,7 +151,7 @@ export interface CreateCondominiumDto {
   companyId: string;
 }
 
-export interface UpdateCondominiumDto extends Partial<CreateCondominiumDto> {}
+export type UpdateCondominiumDto = Partial<CreateCondominiumDto>;
 
 export interface CreateUnitDto {
   doorNumber: string;
@@ -161,7 +161,7 @@ export interface CreateUnitDto {
   condominiumId: string;
 }
 
-export interface UpdateUnitDto extends Partial<CreateUnitDto> {}
+export type UpdateUnitDto = Partial<CreateUnitDto>;
 
 export interface CreateOwnerDto {
   name: string;
@@ -170,7 +170,7 @@ export interface CreateOwnerDto {
   taxNumber?: string;
 }
 
-export interface UpdateOwnerDto extends Partial<CreateOwnerDto> {}
+export type UpdateOwnerDto = Partial<CreateOwnerDto>;
 
 export interface CreateExpenseDto {
   title: string;
@@ -181,7 +181,7 @@ export interface CreateExpenseDto {
   condominiumId: string;
 }
 
-export interface UpdateExpenseDto extends Partial<CreateExpenseDto> {}
+export type UpdateExpenseDto = Partial<CreateExpenseDto>;
 
 export interface CreatePaymentDto {
   amount: number;
@@ -192,4 +192,4 @@ export interface CreatePaymentDto {
   expenseId?: string;
 }
 
-export interface UpdatePaymentDto extends Partial<CreatePaymentDto> {}
+export type UpdatePaymentDto = Partial<CreatePaymentDto>;

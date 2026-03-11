@@ -1,65 +1,80 @@
-import { createContext, useContext, useEffect, useState } from "react";
-
-type Condominium = {
-  id: string;
-  name: string;
-};
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useEffect,
+  useCallback,
+} from "react";
+import { Condominium } from "@/types";
+import { condominiumsService } from "@/services";
 
 type CondominiumContextType = {
   condominiumId: string | null;
+  setCondominiumId: (id: string) => void;
   condominium: Condominium | null;
-  condominiums: Condominium[];
   setCondominium: (condo: Condominium) => void;
+  condominiums: Condominium[];
+  refreshCondominiums: () => Promise<void>;
   clearCondominium: () => void;
-  setCondominiums: (condos: Condominium[]) => void;
 };
 
 const CondominiumContext = createContext<CondominiumContextType | undefined>(
   undefined
 );
 
-const STORAGE_KEY = "selectedCondominium";
+const STORAGE_KEY = "activeCondominiumId";
 
-export function CondominiumProvider({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [condominiumId, setCondominiumId] = useState<string | null>(null);
-  const [condominium, setCondominiumState] = useState<Condominium | null>(null);
+export function CondominiumProvider({ children }: { children: ReactNode }) {
+  const [condominiumId, setCondominiumIdState] = useState<string | null>(() => {
+    return localStorage.getItem(STORAGE_KEY);
+  });
+
+  const [condominium, setCondominium] = useState<Condominium | null>(null);
   const [condominiums, setCondominiums] = useState<Condominium[]>([]);
 
-  // 🔹 Restore from localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      const parsed: Condominium = JSON.parse(stored);
-      setCondominiumState(parsed);
-      setCondominiumId(parsed.id);
-    }
-  }, []);
-
-  const setCondominium = (condo: Condominium) => {
-    setCondominiumState(condo);
-    setCondominiumId(condo.id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(condo));
+  // Save condominiumId to localStorage
+  const setCondominiumId = (id: string) => {
+    setCondominiumIdState(id);
+    localStorage.setItem(STORAGE_KEY, id);
   };
 
   const clearCondominium = () => {
-    setCondominiumState(null);
-    setCondominiumId(null);
+    setCondominiumIdState(null);
+    setCondominium(null);
     localStorage.removeItem(STORAGE_KEY);
   };
+
+  const refreshCondominiums = useCallback(async () => {
+    try {
+      const data = await condominiumsService.getAll();
+      setCondominiums(data);
+
+      // If we have a saved condominiumId, set the current condominium object
+      if (condominiumId) {
+        const selected = data.find((c) => c.id === condominiumId) || null;
+        setCondominium(selected);
+      }
+    } catch (error) {
+      console.error("Error fetching condominiums", error);
+    }
+  }, [condominiumId]);
+
+  // Load all condominiums on mount and when condominiumId changes
+  useEffect(() => {
+    void refreshCondominiums();
+  }, [refreshCondominiums]);
 
   return (
     <CondominiumContext.Provider
       value={{
         condominiumId,
+        setCondominiumId,
         condominium,
-        condominiums,
         setCondominium,
+        condominiums,
+        refreshCondominiums,
         clearCondominium,
-        setCondominiums,
       }}
     >
       {children}
@@ -68,9 +83,9 @@ export function CondominiumProvider({
 }
 
 export function useCondominium() {
-  const context = useContext(CondominiumContext);
-  if (!context) {
-    throw new Error("useCondominium must be used within a CondominiumProvider");
+  const ctx = useContext(CondominiumContext);
+  if (!ctx) {
+    throw new Error("useCondominium must be used within CondominiumProvider");
   }
-  return context;
+  return ctx;
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { DashboardLayout } from "@/layouts/DashboardLayout";
 import { PageHeader } from "@/components/PageHeader";
@@ -31,11 +31,7 @@ export default function Companies() {
     isActive: true,
   });
 
-  useEffect(() => {
-    loadCompanies();
-  }, []);
-
-  const loadCompanies = async () => {
+  const loadCompanies = useCallback(async () => {
     try {
       const data = await companiesService.getAll();
       setCompanies(data);
@@ -44,7 +40,11 @@ export default function Companies() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
+
+  useEffect(() => {
+    void loadCompanies();
+  }, [loadCompanies]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,7 +58,7 @@ export default function Companies() {
       }
       setIsModalOpen(false);
       resetForm();
-      loadCompanies();
+      await loadCompanies();
     } catch (error) {
       toast({ title: "Error saving company", variant: "destructive" });
     }
@@ -71,7 +71,7 @@ export default function Companies() {
       toast({ title: "Company deleted successfully" });
       setIsDeleteOpen(false);
       setSelectedCompany(null);
-      loadCompanies();
+      await loadCompanies();
     } catch (error) {
       toast({ title: "Error deleting company", variant: "destructive" });
     }

@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { DashboardLayout } from "@/layouts/DashboardLayout";
+import { useState, useEffect, useCallback } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { DataTable, Column } from "@/components/DataTable";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -45,39 +44,36 @@ export default function Payments() {
     unitId: "",
     expenseId: "",
   });
-  
-const { condominiumId } = useCondominium();
+
+  const { condominiumId } = useCondominium();
+
+  const loadData = useCallback(
+    async (activeCondominiumId: string) => {
+      try {
+        setIsLoading(true);
+        const [paymentsData, unitsData, expensesData] = await Promise.all([
+          paymentsService.getAll({ condominiumId: activeCondominiumId }),
+          unitsService.getAll({ condominiumId: activeCondominiumId }),
+          expensesService.getAll({ condominiumId: activeCondominiumId }),
+        ]);
+
+        setPayments(paymentsData);
+        setUnits(unitsData);
+        setExpenses(expensesData);
+      } catch {
+        toast({ title: "Error loading payments", variant: "destructive" });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [toast],
+  );
 
   useEffect(() => {
     if (!condominiumId) return;
 
-    paymentsService.getAll({ condominiumId }).then(setPayments);
-  }, [condominiumId]);
-
-  if (!condominiumId) {
-    return <div>No condominium selected</div>;
-  }
-
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      const [paymentsData, unitsData, expensesData] = await Promise.all([
-        paymentsService.getAll(),
-        unitsService.getAll(),
-        expensesService.getAll(),
-      ]);
-      setPayments(paymentsData);
-      setUnits(unitsData);
-      setExpenses(expensesData);
-    } catch (error) {
-      toast({ title: "Error loading data", variant: "destructive" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    void loadData(condominiumId);
+  }, [condominiumId, loadData]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -91,7 +87,9 @@ const { condominiumId } = useCondominium();
       }
       setIsModalOpen(false);
       resetForm();
-      loadData();
+      if (condominiumId) {
+        await loadData(condominiumId);
+      }
     } catch (error) {
       toast({ title: "Error saving payment", variant: "destructive" });
     }
@@ -104,7 +102,9 @@ const { condominiumId } = useCondominium();
       toast({ title: "Payment deleted successfully" });
       setIsDeleteOpen(false);
       setSelectedPayment(null);
-      loadData();
+      if (condominiumId) {
+        await loadData(condominiumId);
+      }
     } catch (error) {
       toast({ title: "Error deleting payment", variant: "destructive" });
     }
@@ -134,6 +134,10 @@ const { condominiumId } = useCondominium();
       expenseId: "",
     });
   };
+
+  if (!condominiumId) {
+    return <div>No condominium selected</div>;
+  }
 
   const columns: Column<Payment>[] = [
     {
@@ -165,7 +169,8 @@ const { condominiumId } = useCondominium();
   ];
 
   return (
-    <DashboardLayout>
+    <>
+      <div className="flex justify-end"></div>
       <PageHeader
         title="Payments"
         subtitle="Track all payments"
@@ -323,6 +328,6 @@ const { condominiumId } = useCondominium();
         confirmLabel="Delete"
         variant="destructive"
       />
-    </DashboardLayout>
+    </>
   );
 }

@@ -32,7 +32,7 @@ export function CondominiumSwitcher() {
           <DropdownMenuItem
             key={condo.id}
             onClick={() => {
-              setCondominium(condo);
+              setCondominium(condo); // sets full object
               navigate(`/condominiums/${condo.id}`);
             }}
           >

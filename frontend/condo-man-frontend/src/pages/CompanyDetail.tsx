@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DashboardLayout } from '@/layouts/DashboardLayout';
 import { PageHeader } from '@/components/PageHeader';
@@ -58,16 +58,14 @@ export default function CompanyDetail() {
   const [deleteType, setDeleteType] = useState<'user' | 'condo' | null>(null);
   const [itemToDelete, setItemToDelete] = useState<User | Condominium | null>(null);
 
-  useEffect(() => {
-    if (id) loadData();
-  }, [id]);
+  const loadData = useCallback(async () => {
+    if (!id) return;
 
-  const loadData = async () => {
     try {
       const [companyData, usersData, condosData] = await Promise.all([
-        companiesService.getById(id!),
-        usersService.getByCompany(id!),
-        condominiumsService.getByCompany(id!),
+        companiesService.getById(id),
+        usersService.getByCompany(id),
+        condominiumsService.getByCompany(id),
       ]);
       setCompany(companyData);
       setUsers(usersData);
@@ -77,7 +75,11 @@ export default function CompanyDetail() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [id, toast]);
+
+  useEffect(() => {
+    void loadData();
+  }, [loadData]);
 
   // User handlers
   const handleUserSubmit = async (e: React.FormEvent) => {
@@ -92,7 +94,7 @@ export default function CompanyDetail() {
       }
       setIsUserModalOpen(false);
       resetUserForm();
-      loadData();
+      await loadData();
     } catch (error) {
       toast({ title: 'Error saving user', variant: 'destructive' });
     }

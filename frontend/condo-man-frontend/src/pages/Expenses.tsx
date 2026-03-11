@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { DashboardLayout } from "@/layouts/DashboardLayout";
+import { useState, useEffect, useCallback, type FormEvent } from "react";
 import { PageHeader } from "@/components/PageHeader";
 import { DataTable, Column } from "@/components/DataTable";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -40,49 +39,57 @@ export default function Expenses() {
 
   const { condominiumId } = useCondominium();
 
+  const loadData = useCallback(
+    async (activeCondominiumId: string) => {
+      try {
+        setIsLoading(true);
+        const [expensesData, condominiumsData] = await Promise.all([
+          expensesService.getAll({ condominiumId: activeCondominiumId }),
+          condominiumsService.getAll(),
+        ]);
+        setExpenses(expensesData);
+        setCondominiums(condominiumsData);
+      } catch {
+        toast({ title: "Error loading expenses", variant: "destructive" });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [toast],
+  );
+
   useEffect(() => {
     if (!condominiumId) return;
 
-    expensesService.getAll({ condominiumId }).then(setExpenses);
-  }, [condominiumId]);
+    void loadData(condominiumId);
+  }, [condominiumId, loadData]);
 
   if (!condominiumId) {
     return <div>No condominium selected</div>;
   }
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
-  const loadData = async () => {
-    try {
-      const [expensesData, condosData] = await Promise.all([
-        expensesService.getAll(),
-        condominiumsService.getAll(),
-      ]);
-      setExpenses(expensesData);
-      setCondominiums(condosData);
-    } catch (error) {
-      toast({ title: "Error loading data", variant: "destructive" });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
       if (selectedExpense) {
-        await expensesService.update(selectedExpense.id, formData);
+        await expensesService.update(selectedExpense.id, {
+          ...formData,
+          condominiumId,
+        });
         toast({ title: "Expense updated successfully" });
       } else {
-        await expensesService.create(formData);
+        await expensesService.create({
+          ...formData,
+          condominiumId,
+        });
         toast({ title: "Expense created successfully" });
       }
       setIsModalOpen(false);
       resetForm();
-      loadData();
-    } catch (error) {
+      if (condominiumId) {
+        await loadData(condominiumId);
+      }
+    } catch {
       toast({ title: "Error saving expense", variant: "destructive" });
     }
   };
@@ -94,7 +101,9 @@ export default function Expenses() {
       toast({ title: "Expense deleted successfully" });
       setIsDeleteOpen(false);
       setSelectedExpense(null);
-      loadData();
+      if (condominiumId) {
+        await loadData(condominiumId);
+      }
     } catch (error) {
       toast({ title: "Error deleting expense", variant: "destructive" });
     }
@@ -145,7 +154,8 @@ export default function Expenses() {
   ];
 
   return (
-    <DashboardLayout>
+    <>
+      <div className="flex justify-end"></div>
       <PageHeader
         title="Expenses"
         subtitle="Track all expenses"
@@ -285,6 +295,6 @@ export default function Expenses() {
         confirmLabel="Delete"
         variant="destructive"
       />
-    </DashboardLayout>
+    </>
   );
 }
